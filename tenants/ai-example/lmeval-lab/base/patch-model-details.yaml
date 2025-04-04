@@ -1,6 +1,6 @@
 - op: replace
   path: /spec/template/spec/initContainers/0/env/0/value
-  value: granite-3b-code-base
+  value: qwen-instruct
 - op: replace
   path: /spec/template/spec/initContainers/0/env/1/value
-  value: https://huggingface.co/ibm-granite/granite-3b-code-base.git
+  value: https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct.git
