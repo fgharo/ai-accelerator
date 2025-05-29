@@ -10,6 +10,7 @@ components:
   - ../../components/components-serving
   - ../../components/components-training
   - ../../components/components-trustyai
+  - ../../components/components-modelregistry
   - ../../components/default-notebook-pvc-size
   - ../../components/hardware-profiles-enabled
   - ../../components/hardware-profiles-nvidia-gpu
