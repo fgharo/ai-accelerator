@@ -19,3 +19,4 @@ subjects:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
+  name: registry-user-rhoai-model-registry
