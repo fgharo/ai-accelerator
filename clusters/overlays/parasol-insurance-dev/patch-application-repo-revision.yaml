@@ -3,4 +3,4 @@
   value: 'https://github.com/fgharo/ai-accelerator.git'
 - op: replace
   path: /spec/source/targetRevision
-  value: main
+  value: rhoai-bootcamp-cohort-4
