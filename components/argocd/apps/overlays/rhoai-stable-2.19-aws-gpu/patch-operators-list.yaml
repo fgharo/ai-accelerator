@@ -57,8 +57,9 @@ spec:
       #   values:
       #     name: web-terminal-operator
       #     path: components/operators/web-terminal-operator/operator/overlays/fast
-      - cluster: local
-        url: https://kubernetes.default.svc
-        values:
-          name: openshift-data-foundation-operator
-          path: components/operators/odf/aggregate/overlays/aws-node-labeler
+      # Commenting out odf operator as I am testing the maas with minio.
+      # - cluster: local
+      #   url: https://kubernetes.default.svc
+      #   values:
+      #     name: openshift-data-foundation-operator
+      #     path: components/operators/odf/aggregate/overlays/aws-node-labeler
