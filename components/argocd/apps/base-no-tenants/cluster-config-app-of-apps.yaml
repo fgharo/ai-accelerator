@@ -13,7 +13,7 @@ spec:
   source:
     path: patch-me-see-overlays
     repoURL: https://github.com/fgharo/ai-accelerator.git
-    targetRevision: main
+    targetRevision: arl-kfp-pipeline-env
   syncPolicy:
     automated:
       prune: false
