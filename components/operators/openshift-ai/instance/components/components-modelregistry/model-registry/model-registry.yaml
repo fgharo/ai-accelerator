@@ -11,7 +11,7 @@ metadata:
     - modelregistry.opendatahub.io/finalizer
 spec:
   grpc:
-    image: 'registry.redhat.io/rhoai/odh-mlmd-grpc-server-rhel8@sha256:e3fad88efd353df3dc3f9cbad170bf9a0977a8258cf1912bdba4d190713af042'
+    image: 'registry.redhat.io/rhoai/odh-mlmd-grpc-server-rhel8@sha256:412b6531fa80189f484eba8f29fac58400423bfbd396c1213b98c744314484ea'
     port: 9090
     resources:
       limits:
@@ -46,7 +46,7 @@ spec:
     skipDBCreation: false
     username: root
   rest:
-    image: 'registry.redhat.io/rhoai/odh-model-registry-rhel8@sha256:614da995a9ace4169e2bf99c7b38a4579df3774c0a09077970d51d273f8c48a7'
+    image: 'registry.redhat.io/rhoai/odh-model-registry-rhel8@sha256:cdc7fd0d50c48ec07579413dfc6ef02bb1cce29f14eb87dc5054e0dcbd21d722'
     port: 8080
     resources:
       limits:
