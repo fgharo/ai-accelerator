@@ -11,7 +11,7 @@ components:
   - ../../components/components-llamastack
   - ../../components/components-training
   - ../../components/components-trustyai
-  - ../../components/components-modelregistry
+  # - ../../components/components-modelregistry
   - ../../components/dashboard-feature-hardware-profiles
   - ../../components/default-notebook-pvc-size
   - ../../components/nvidia-gpu-hardware-profile
