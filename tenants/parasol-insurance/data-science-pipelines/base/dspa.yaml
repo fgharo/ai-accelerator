@@ -28,7 +28,7 @@ spec:
       s3CredentialsSecret:
         accessKey: AWS_ACCESS_KEY_ID # Update with minio access key
         secretKey: AWS_SECRET_ACCESS_KEY # Update with minio secret key
-        secretName: <secret-name> # Update with the secret name
+        secretName: minio-data-connection # Update with the secret name
       scheme: http
   persistenceAgent:
     deploy: true
