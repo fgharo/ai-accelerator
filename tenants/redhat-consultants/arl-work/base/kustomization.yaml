@@ -4,5 +4,8 @@ kind: Kustomization
 namespace: object-datastore
 
 resources:
+  # Resources for s3 object storage.
   - ./namespace-object-datastore.yaml
   - ../../../../components/apps/minio/overlays/default
+  # Resources for pipeline.
+  - ./namespace-arl-work.yaml
