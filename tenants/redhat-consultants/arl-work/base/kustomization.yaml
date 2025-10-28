@@ -8,3 +8,4 @@ resources:
   - ./namespace-arl-work.yaml
   - ./secret-pipelines.yaml
   - ./datasciencepipelinesapplication-dspa.yaml
+  - ./rolebindings-arl-work-modelregistry-rolebinding.yaml
