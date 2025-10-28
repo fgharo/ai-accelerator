@@ -7,4 +7,4 @@ resources:
   # Resources for pipeline.
   - ./namespace-arl-work.yaml
   - ./secret-pipelines.yaml
-  # - ./datasciencepipelinesapplication-dspa.yaml
+  - ./datasciencepipelinesapplication-dspa.yaml
