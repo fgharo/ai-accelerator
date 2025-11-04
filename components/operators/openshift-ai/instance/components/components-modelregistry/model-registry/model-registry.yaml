@@ -20,22 +20,22 @@ spec:
       requests:
         cpu: 100m
         memory: 256Mi
-  # istio:
-  #   gateway:
-  #     grpc:
-  #       gatewayRoute: enabled
-  #       port: 443
-  #       tls:
-  #         credentialName: default-modelregistry-cert
-  #         mode: SIMPLE
-  #     istioIngress: ingressgateway
-  #     rest:
-  #       gatewayRoute: enabled
-  #       port: 443
-  #       tls:
-  #         credentialName: default-modelregistry-cert
-  #         mode: SIMPLE
-  #   tlsMode: ISTIO_MUTUAL
+  istio:
+    gateway:
+      grpc:
+        gatewayRoute: enabled
+        port: 443
+        tls:
+          credentialName: default-modelregistry-cert
+          mode: SIMPLE
+      istioIngress: ingressgateway
+      rest:
+        gatewayRoute: enabled
+        port: 443
+        tls:
+          credentialName: default-modelregistry-cert
+          mode: SIMPLE
+    tlsMode: ISTIO_MUTUAL
   mysql:
     database: metadb
     host: mysql-model-registry-db.rhoai-model-registry-mysql-db.svc.cluster.local
