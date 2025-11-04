@@ -10,16 +10,16 @@ metadata:
   finalizers:
     - modelregistry.opendatahub.io/finalizer
 spec:
-  grpc: {}
-    # image: 'registry.redhat.io/rhoai/odh-mlmd-grpc-server-rhel8@sha256:412b6531fa80189f484eba8f29fac58400423bfbd396c1213b98c744314484ea'
-    # port: 9090
-    # resources:
-    #   limits:
-    #     cpu: 100m
-    #     memory: 256Mi
-    #   requests:
-    #     cpu: 100m
-    #     memory: 256Mi
+  grpc: # {}
+    image: 'registry.redhat.io/rhoai/odh-mlmd-grpc-server-rhel9@sha256:5a767b9fbb13f86d18bc79c3766edc520d898b532ba95039830027524507beb9'
+    port: 9090
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
   # istio:
   #   gateway:
   #     grpc:
