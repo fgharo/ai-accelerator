@@ -45,14 +45,14 @@ spec:
     port: 3306
     skipDBCreation: false
     username: root
-  rest: {}
-    # image: 'registry.redhat.io/rhoai/odh-model-registry-rhel8@sha256:cdc7fd0d50c48ec07579413dfc6ef02bb1cce29f14eb87dc5054e0dcbd21d722'
-    # port: 8080
-    # resources:
-    #   limits:
-    #     cpu: 100m
-    #     memory: 256Mi
-    #   requests:
-    #     cpu: 100m
-    #     memory: 256Mi
-    # serviceRoute: disabled
+  rest: # {}
+    image: 'registry.redhat.io/rhoai/odh-model-registry-rhel9@sha256:8535d522465ce07a1fc46eb0da6e56185de83f3c90afdea5c6607d7005b957e1'
+    port: 8080
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+    serviceRoute: disabled
