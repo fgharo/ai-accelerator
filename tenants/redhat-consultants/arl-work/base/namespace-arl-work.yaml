@@ -6,3 +6,4 @@ metadata:
     opendatahub.io/dashboard: "true"
     kubernetes.io/metadata.name: arl-work
     modelmesh-enabled: "true"
+    datasciencepipelines: "true"
