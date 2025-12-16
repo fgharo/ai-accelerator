@@ -9,4 +9,4 @@ resources:
   - setup-s3.yaml
   - setup-kueue-resources.yaml
   - setup-workbench.yaml
-  
+  - setup-model-deployment.yaml

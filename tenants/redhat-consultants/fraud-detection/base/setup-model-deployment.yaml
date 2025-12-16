@@ -1,0 +1,99 @@
+---
+apiVersion: serving.kserve.io/v1alpha1
+kind: ServingRuntime
+metadata:
+  annotations:
+    enable-route: "true"
+    opendatahub.io/accelerator-name: ""
+    opendatahub.io/apiProtocol: REST
+    opendatahub.io/recommended-accelerators: '["nvidia.com/gpu"]'
+    opendatahub.io/runtime-version: v2025.2.1
+    opendatahub.io/serving-runtime-scope: global
+    opendatahub.io/template-display-name: OpenVINO Model Server
+    opendatahub.io/template-name: ovms
+    openshift.io/display-name: Model Server
+  labels:
+    opendatahub.io/dashboard: "true"
+  name: model-server
+  namespace: fraud-detection
+spec:
+  builtInAdapter:
+    env:
+    - name: OVMS_FORCE_TARGET_DEVICE
+      value: AUTO
+    memBufferBytes: 134217728
+    modelLoadingTimeoutMillis: 90000
+    runtimeManagementPort: 8888
+    serverType: ovms
+  containers:
+  - args:
+    - --port=8001
+    - --rest_port=8888
+    - --config_path=/models/model_config_list.json
+    - --file_system_poll_wait_seconds=0
+    - --grpc_bind_address=0.0.0.0
+    - --rest_bind_address=0.0.0.0
+    image: registry.redhat.io/rhoai/odh-openvino-model-server-rhel9@sha256:906d7d4d8d06a09ac5060220dc23c8ac8d7f2fd54445b9b9b42b0dd1af14e488
+    name: ovms
+    resources:
+      limits:
+        cpu: "2"
+        memory: 8Gi
+      requests:
+        cpu: "1"
+        memory: 4Gi
+    volumeMounts:
+    - mountPath: /dev/shm
+      name: shm
+  grpcDataEndpoint: port:8001
+  grpcEndpoint: port:8085
+  multiModel: true
+  protocolVersions:
+  - grpc-v1
+  replicas: 1
+  supportedModelFormats:
+  - autoSelect: true
+    name: openvino_ir
+    version: opset1
+  - autoSelect: true
+    name: onnx
+    version: "1"
+  - autoSelect: true
+    name: tensorflow
+    version: "2"
+  tolerations: []
+  volumes:
+  - emptyDir:
+      medium: Memory
+      sizeLimit: 2Gi
+    name: shm
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  annotations:
+    openshift.io/display-name: fraud
+    serving.kserve.io/deploymentMode: ModelMesh
+  creationTimestamp: "2025-12-16T22:21:09Z"
+  finalizers:
+  - odh.inferenceservice.finalizers
+  generation: 1
+  labels:
+    opendatahub.io/dashboard: "true"
+  name: fraud
+  namespace: fraud-detection
+  resourceVersion: "236621"
+  uid: 1b58b63c-50a1-4990-9a9c-52363edb7dd4
+spec:
+  predictor:
+    automountServiceAccountToken: false
+    model:
+      modelFormat:
+        name: onnx
+        version: "1"
+      name: ""
+      resources: {}
+      runtime: model-server
+      storage:
+        key: aws-connection-my-storage
+        path: models/fraud
