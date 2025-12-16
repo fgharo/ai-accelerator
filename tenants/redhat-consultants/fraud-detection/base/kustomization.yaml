@@ -8,3 +8,5 @@ resources:
   - datascienceproject-fraud-detection.yaml
   - setup-s3.yaml
   - setup-kueue-resources.yaml
+  - setup-workbench.yaml
+  
