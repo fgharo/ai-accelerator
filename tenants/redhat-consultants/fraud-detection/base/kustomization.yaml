@@ -3,4 +3,4 @@ kind: Kustomization
 
 resources:
   # Resources for s3 object storage.
-  - 
+  - datascienceproject-fraud-detection.yaml
