@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fraud-detection
+  labels:
+    opendatahub.io/dashboard: "true"
+    kubernetes.io/metadata.name: fraud-detection
+    modelmesh-enabled: "true"
+    datasciencepipelines: "true"
+  annotations:
+    openshift.io/description: My Fraud Detection project
+    openshift.io/display-name: Fraud Detection
