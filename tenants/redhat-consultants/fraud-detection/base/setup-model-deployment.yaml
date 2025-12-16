@@ -74,16 +74,10 @@ metadata:
   annotations:
     openshift.io/display-name: fraud
     serving.kserve.io/deploymentMode: ModelMesh
-  creationTimestamp: "2025-12-16T22:21:09Z"
-  finalizers:
-  - odh.inferenceservice.finalizers
-  generation: 1
   labels:
     opendatahub.io/dashboard: "true"
   name: fraud
   namespace: fraud-detection
-  resourceVersion: "236621"
-  uid: 1b58b63c-50a1-4990-9a9c-52363edb7dd4
 spec:
   predictor:
     automountServiceAccountToken: false
