@@ -7,3 +7,4 @@ resources:
   # Resources for s3 object storage.
   - datascienceproject-fraud-detection.yaml
   - setup-s3.yaml
+  - setup-kueue-resources.yaml
