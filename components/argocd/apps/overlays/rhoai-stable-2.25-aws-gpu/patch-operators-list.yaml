@@ -51,13 +51,18 @@ spec:
         values:
           name: openshift-serverless-operator
           path: components/operators/openshift-serverless/aggregate/overlays/rhdp
+      - cluster: local
+        url: https://kubernetes.default.svc
+        values:
+          name: streams-for-apache-kafka-operator
+          path: components/operators/streams-for-apache-kafka/operator/overlays/stable
       # 
       # First list on main README: 
         # OpenShift AI + [Installed]
         # Serverless Operator +  [Installed]
-        # Streams for Apache Kafka Operator + []
-        # Knative Eventing + [WIP]
-        # Knative Kafka w/ broker functionality enabled []
+        # Streams for Apache Kafka Operator + [Installed]
+        # Knative Eventing + [Installed]
+        # Knative Kafka w/ broker functionality enabled [Installed]
 
       # Sukantas list:
       #       Setting up observability infrastructure: needs few operator

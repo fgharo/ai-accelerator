@@ -1,0 +1,9 @@
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: amq-streams-kafka-l2h7g
+  namespace: amq-streams-kafka
+spec:
+  targetNamespaces:
+  - amq-streams-kafka
+  upgradeStrategy: Default
