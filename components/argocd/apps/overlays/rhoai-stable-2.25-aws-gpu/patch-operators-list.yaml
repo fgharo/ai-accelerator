@@ -46,6 +46,26 @@ spec:
         values:
           name: redhat-build-of-kueue-operator
           path: components/operators/redhat-build-of-kueue/aggregate/overlays/stable-v1.1
+      - cluster: local
+        url: https://kubernetes.default.svc
+        values:
+          name: openshift-serverless-operator
+          path: components/operators/openshift-serverless/aggregate/overlays/rhdp
+      # 
+      # First list on main README: 
+        # OpenShift AI + [Installed]
+        # Serverless Operator +  [Installed]
+        # Streams for Apache Kafka Operator + []
+        # Knative Eventing + [WIP]
+        # Knative Kafka w/ broker functionality enabled []
+
+      # Sukantas list:
+      #       Setting up observability infrastructure: needs few operator
+      # cluster-observability-operator - PodMonitor/ServiceMonitor CRDs and UI plugins
+      # grafana-operator - Grafana operator for visualization and dashboard management
+      # otel-operator - Red Hat Build of OpenTelemetry operator
+      # tempo-operator - Distributed tracing backend operator
+
 
       # - cluster: local
       #   url: https://kubernetes.default.svc

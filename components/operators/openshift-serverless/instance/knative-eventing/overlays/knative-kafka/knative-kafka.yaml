@@ -1,11 +1,23 @@
-apiVersion: operator.serverless.openshift.io/v1alpha1
 kind: KnativeKafka
+apiVersion: operator.serverless.openshift.io/v1alpha1
 metadata:
-    name: knative-kafka
-    namespace: knative-eventing
+  name: knative-kafka
+  namespace: knative-eventing
 spec:
-    channel:
-        bootstrapServers: ''
-        enabled: false
-    source:
-        enabled: true
+  broker:
+    enabled: true
+  source:
+    enabled: false # optional, not necessary for the self-service agent
+  channel:
+    enabled: false # optional, not necessary for the self-service agent
+# apiVersion: operator.serverless.openshift.io/v1alpha1
+# kind: KnativeKafka
+# metadata:
+#     name: knative-kafka
+#     namespace: knative-eventing
+# spec:
+#     channel:
+#         bootstrapServers: ''
+#         enabled: false
+#     source:
+#         enabled: true
