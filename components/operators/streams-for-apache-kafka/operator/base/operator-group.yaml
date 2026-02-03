@@ -4,6 +4,5 @@ metadata:
   name: amq-streams-kafka-l2h7g
   namespace: amq-streams-kafka
 spec:
-  targetNamespaces:
-  - amq-streams-kafka
+  targetNamespaces: []
   upgradeStrategy: Default
