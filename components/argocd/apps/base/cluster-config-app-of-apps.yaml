@@ -13,7 +13,7 @@ spec:
   source:
     path: patch-me-see-overlays
     repoURL: https://github.com/fgharo/ai-accelerator.git
-    targetRevision: cb-demo-environment-it-self-service-agent-prod-mode
+    targetRevision: cb-demo-environment-it-self-service-agent-prod-mode-mcp-servers
   syncPolicy:
     automated:
       prune: false
