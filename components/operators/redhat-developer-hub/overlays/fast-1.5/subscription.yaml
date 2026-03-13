@@ -1,0 +1,8 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: rhdh
+  namespace: rhdh-operator
+spec:
+  channel: fast-1.5
+  startingCSV: rhdh-operator.v1.5.3
