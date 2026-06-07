@@ -6,7 +6,7 @@ resources:
  - secret-pgvector.yaml 
 
 helmCharts:
-  - name: pgvector-postgresql-15-4
+  - name: pgvector
     repo: ../charts
     releaseName: pgvector
     namespace: llama-stack
