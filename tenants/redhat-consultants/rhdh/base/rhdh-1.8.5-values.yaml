@@ -1,0 +1,319 @@
+global:
+  auth:
+    backend:
+      enabled: true
+      existingSecret: ''
+      value: ''
+  clusterRouterBase: apps.cluster-kvlv2.kvlv2.sandbox3453.opentlc.com
+  dynamic:
+    includes:
+      - dynamic-plugins.default.yaml
+    plugins:
+      - disabled: false
+        package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-github-dynamic
+      - disabled: false
+        package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-github-org-dynamic
+      # Add this line below:
+      - disabled: false
+        package: ./dynamic-plugins/dist/backstage-plugin-scaffolder-backend-module-github-dynamic
+  host: ''
+route:
+  enabled: true
+  host: '{{ .Values.global.host }}'
+  path: /
+  tls:
+    enabled: true
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  wildcardPolicy: None
+upstream:
+  backstage:
+    extraEnvVarsSecrets:
+      - github-secrets
+    appConfig:
+      catalog:
+        rules:
+          - allow: [Component, System, API, Resource, Location, User, Group, Template]
+        locations:
+          - type: url
+            target: https://github.com/fgharo/backstage-entities/blob/main/location.yaml
+          - type: url
+            target: https://github.com/fgharo/rhdh-fastmcp-template/blob/main/location.yaml
+        providers:
+          github:
+            providerId:
+              catalogPath: /catalog-info.yaml
+              organization: ${GITHUB_ORGANIZATION}
+              schedule:
+                frequency: { minutes: 5 }
+                initialDelay: { seconds: 15 }
+                timeout: { minutes: 3 }
+          githubOrg:
+            githubUrl: 'https://github.com'
+            id: production
+            orgs:
+              - ${GITHUB_ORGANIZATION}
+            schedule:
+              frequency: { minutes: 5 }
+              initialDelay: { seconds: 15 }
+              timeout: { minutes: 3 }
+      integrations:
+        github:
+          - host: github.com
+            apps:
+              - appId: '${AUTH_GITHUB_APP_ID}'
+                clientId: '${AUTH_GITHUB_CLIENT_ID}'
+                clientSecret: '${AUTH_GITHUB_CLIENT_SECRET}'
+                privateKey: |
+                  ${GITHUB_PRIVATE_KEY}
+                webhookSecret: none
+      app:
+        baseUrl: 'https://{{- include "janus-idp.hostname" . }}'
+
+      signInPage: github
+      auth:
+        providers:
+          guest:
+            dangerouslyAllowOutsideDevelopment: true
+            userEntityRef: user:default/guest
+        # environment: production
+        # providers:
+        #   github:
+        #     production:
+        #       clientId: '${AUTH_GITHUB_CLIENT_ID}'
+        #       clientSecret: '${AUTH_GITHUB_CLIENT_SECRET}'
+        #       # Had to add this as I was getting error:
+        #       # Login failed; caused by Error: Sign in failed: User not found in the RHDH software catalog. Verify that users/groups are synchronized to the software catalog. For non-production environments, manually provision the user or disable the user provisioning requirement. Refer to the RHDH Authentication documentation for further details.
+        #       signIn:
+        #         dangerouslyAllowSignInWithoutUserInCatalog: true
+
+
+      backend:
+        auth:
+          externalAccess:
+            - options:
+                secret: '${BACKEND_SECRET}'
+                subject: legacy-default-config
+              type: legacy
+        baseUrl: 'https://{{- include "janus-idp.hostname" . }}'
+        cors:
+          origin: 'https://{{- include "janus-idp.hostname" . }}'
+        database:
+          connection:
+            password: '${POSTGRESQL_ADMIN_PASSWORD}'
+            user: postgres
+    args:
+      - '--config'
+      - dynamic-plugins-root/app-config.dynamic-plugins.yaml
+    containerPorts:
+      backend: 7007
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    extraEnvVars:
+      - name: LOG_LEVEL
+        value: debug
+      - name: BACKEND_SECRET
+        valueFrom:
+          secretKeyRef:
+            key: backend-secret
+            name: '{{ include "janus-idp.backend-secret-name" $ }}'
+      - name: POSTGRESQL_ADMIN_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            key: postgres-password
+            name: '{{- include "janus-idp.postgresql.secretName" . }}'
+    # extraVolumeMounts: []
+      # - mountPath: /opt/app-root/src/dynamic-plugins-root
+      #   name: dynamic-plugins-root
+      # - mountPath: /var/log/audit
+      #   name: audit-log-data
+    extraVolumes:
+      - name: dynamic-plugins-root
+        ephemeral:
+          volumeClaimTemplate:
+            spec:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  # -- Size of the volume that will contain the dynamic plugins. It should be large enough to contain all the plugins.
+                  storage: 5Gi
+      - name: temp
+        emptyDir: {}
+      # - name: dynamic-plugins-root
+      #   persistentVolumeClaim:
+      #     claimName: '{{ printf "%s-dynamic-plugins-root" .Release.Name }}'
+      # - name: audit-log-data
+      #   persistentVolumeClaim:
+      #     claimName: '{{ printf "%s-audit-log" .Release.Name }}'
+      - configMap:
+          defaultMode: 420
+          name: '{{ printf "%s-dynamic-plugins" .Release.Name }}'
+          optional: true
+        name: dynamic-plugins
+      - name: dynamic-plugins-npmrc
+        secret:
+          defaultMode: 420
+          optional: true
+          secretName: '{{ printf "%s-dynamic-plugins-npmrc" .Release.Name }}'
+      - name: dynamic-plugins-registry-auth
+        secret:
+          defaultMode: 416
+          optional: true
+          secretName: '{{ printf "%s-dynamic-plugins-registry-auth" .Release.Name }}'
+      - name: npmcacache
+    image:
+      pullPolicy: Always
+      registry: registry.redhat.io
+      # repository: rhdh/rhdh-hub-rhel9@sha256
+      # tag: 0b95eb835576eb3b093695168fb78672f9d378ad027eb0298d807e232c021c09
+    initContainers:
+      - command:
+          - ./install-dynamic-plugins.sh
+          - /dynamic-plugins-root
+        env:
+          - name: NPM_CONFIG_USERCONFIG
+            value: /opt/app-root/src/.npmrc.dynamic-plugins
+        image: '{{ include "backstage.image" . }}'
+        imagePullPolicy: Always
+        name: install-dynamic-plugins
+        resources:
+          limits:
+            cpu: 1000m
+            ephemeral-storage: 5Gi
+            memory: 2.5Gi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+        volumeMounts:
+          - mountPath: /dynamic-plugins-root
+            name: dynamic-plugins-root
+          - mountPath: /opt/app-root/src/dynamic-plugins.yaml
+            name: dynamic-plugins
+            readOnly: true
+            subPath: dynamic-plugins.yaml
+          - mountPath: /opt/app-root/src/.npmrc.dynamic-plugins
+            name: dynamic-plugins-npmrc
+            readOnly: true
+            subPath: .npmrc
+          - mountPath: /opt/app-root/src/.config/containers
+            name: dynamic-plugins-registry-auth
+            readOnly: true
+          - mountPath: /opt/app-root/src/.npm/_cacache
+            name: npmcacache
+        workingDir: /opt/app-root/src
+    installDir: /opt/app-root/src
+    livenessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /healthcheck
+        port: 7007
+        scheme: HTTP
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 2
+    podAnnotations:
+      checksum/dynamic-plugins: >-
+        {{- include "common.tplvalues.render" ( dict "value"
+        .Values.global.dynamic "context" $) | sha256sum }}
+    readinessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /healthcheck
+        port: 7007
+        scheme: HTTP
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      successThreshold: 2
+      timeoutSeconds: 2
+    replicas: 1
+    resources:
+      limits:
+        cpu: 1000m
+        ephemeral-storage: 5Gi
+        memory: 2.5Gi
+      requests:
+        cpu: 250m
+        memory: 1Gi
+    revisionHistoryLimit: 10
+  clusterDomain: cluster.local
+  diagnosticMode:
+    args:
+      - infinity
+    command:
+      - sleep
+    enabled: false
+  ingress:
+    enabled: false
+    host: '{{ .Values.global.host }}'
+    tls:
+      enabled: false
+  metrics:
+    serviceMonitor:
+      enabled: false
+      path: /metrics
+  nameOverride: developer-hub
+  networkPolicy:
+    egressRules:
+      denyConnectionsToExternal: false
+    enabled: false
+  postgresql:
+    auth:
+      secretKeys:
+        adminPasswordKey: postgres-password
+        userPasswordKey: password
+    enabled: true
+    image:
+      registry: registry.redhat.io
+      repository: rhel9/postgresql-15@sha256
+      # tag: 10475924583aba63c50b00337b4097cdad48e7a8567fd77f400b278ad1782bfc
+    postgresqlDataDir: /var/lib/pgsql/data/userdata
+    primary:
+      containerSecurityContext:
+        enabled: false
+      extraEnvVars:
+        - name: POSTGRESQL_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: postgres-password
+              name: '{{- include "postgresql.v1.secretName" . }}'
+      persistence:
+        enabled: true
+        mountPath: /var/lib/pgsql/data
+        size: 1Gi
+      podSecurityContext:
+        enabled: false
+      resources:
+        limits:
+          cpu: 250m
+          ephemeral-storage: 20Mi
+          memory: 1024Mi
+        requests:
+          cpu: 250m
+          memory: 256Mi
+  service:
+    externalTrafficPolicy: Cluster
+    ports:
+      backend: 7007
+      name: http-backend
+      targetPort: backend
+    sessionAffinity: None
+    type: ClusterIP
+  serviceAccount:
+    automountServiceAccountToken: true
+    create: false
