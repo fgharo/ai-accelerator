@@ -4,3 +4,9 @@ kind: Kustomization
 resources:
  - namespace-llama-stack.yaml
  - secret-pgvector.yaml 
+
+helmCharts:
+  - name: pgvector
+    repo: ./charts
+    releaseName: pgvector
+    namespace: llama-stack
