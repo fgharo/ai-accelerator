@@ -40,7 +40,7 @@ spec:
               value: {{ default "postgres" .Values.env.POSTGRES_DB | quote }}
           command: ["sh", "-c"]
           args:
-            - >-
+            - |-
               psql -v ON_ERROR_STOP=1 \
                 -h {{ include "pgvector.fullname" . }} \
                 -p {{ .Values.service.port }} \
