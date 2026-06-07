@@ -3,6 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ include "pgvector.fullname" . }}-create-vector-extension
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "pgvector.labels" . | nindent 4 }}
   annotations:
