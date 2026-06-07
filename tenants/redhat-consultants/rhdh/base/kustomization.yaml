@@ -9,6 +9,6 @@ helmCharts:
   - name: redhat-developer-hub
     repo: https://charts.openshift.io/
     version: 1.8.5
-    releaseName: openshift-charts/redhat-developer-hub
+    releaseName: redhat-developer-hub
     valuesFile: rhdh-1.8.5-values.yaml
     namespace: backstage
