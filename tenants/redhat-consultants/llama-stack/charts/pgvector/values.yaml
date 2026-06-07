@@ -39,12 +39,12 @@ env:
 secrets:
   # Name of the secret to use for the PostgreSQL password.
   # If empty, a new secret will be created with a random password.
-  existingSecret: ""
+  existingSecret: "pgvector"
   # The key in the secret that contains the password
   passwordKey: "password"
   # If creating a new secret, this password will be used.
   # It's recommended to use existingSecret or let Helm generate a random password.
-  password: "ce554466-5db7-4fed-8f9c-9b8d353f0003"
+  # password: "ce554466-5db7-4fed-8f9c-9b8d353f0003"
 
 postInstall:
   createVectorExtension: true 
