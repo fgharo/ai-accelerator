@@ -5,10 +5,11 @@ resources:
  - namespace-llama-stack.yaml
  - secret-pgvector.yaml 
 
-helmGlobals:
-  chartHome: ./charts
+# helmGlobals:
+#   chartHome: ./charts
 
 helmCharts:
   - name: pgvector
     releaseName: pgvector
+    repo: ./charts
     namespace: llama-stack
