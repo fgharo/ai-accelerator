@@ -41,10 +41,11 @@ spec:
           command: ["sh", "-c"]
           args:
             - |
-              psql -v ON_ERROR_STOP=1 \
-                -h {{ include "pgvector.fullname" . }} \
-                -p {{ .Values.service.port }} \
-                -U "$PGUSER" \
-                -d "$PGDATABASE" \
-                -c "CREATE EXTENSION IF NOT EXISTS vector;"
+              psql \
+              -v ON_ERROR_STOP=1 \
+              -h {{ include "pgvector.fullname" . }} \
+              -p {{ .Values.service.port }} \
+              -U "$PGUSER" \
+              -d "$PGDATABASE" \
+              -c "CREATE EXTENSION IF NOT EXISTS vector;"
 {{- end }} 
