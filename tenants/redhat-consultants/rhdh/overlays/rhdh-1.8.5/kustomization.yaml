@@ -5,3 +5,13 @@ namespace: backstage
 
 resources:
 - ../../base
+
+
+patches:
+  - target:
+      kind: ConfigMap
+      name: redhat-developer-hub-dynamic-plugins
+    patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: backstage
