@@ -41,7 +41,7 @@ secrets:
   # If empty, a new secret will be created with a random password.
   existingSecret: "pgvector"
   # The key in the secret that contains the password
-  passwordKey: "password"
+  passwordKey: "pgvector-password"
   # If creating a new secret, this password will be used.
   # It's recommended to use existingSecret or let Helm generate a random password.
   # password: "ce554466-5db7-4fed-8f9c-9b8d353f0003"

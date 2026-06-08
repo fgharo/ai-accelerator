@@ -1,0 +1,84 @@
+---
+apiVersion: llamastack.io/v1alpha1
+kind: LlamaStackDistribution
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"llamastack.io/v1alpha1","kind":"LlamaStackDistribution","metadata":{"annotations":{},"name":"llamastack-with-config","namespace":"default"},"spec":{"replicas":1,"server":{"containerSpec":{"port":8321},"distribution":{"name":"remote-vllm"},"userConfig":{"configMapName":"llama-stack-config"}}}}
+  name: llamastack-with-config
+spec:
+  replicas: 1
+  server:
+    containerSpec:
+      command:
+        - /bin/sh
+        - '-c'
+        - llama stack run /etc/llama-stack/run.yaml
+      env:
+        - name: LLAMA17B_URL
+          value: 'https://litellm-prod.apps.maas.redhatworkshops.io/v1'
+        - name: LLAMA17B_MODEL
+          value: llama-scout-17b
+        - name: LLAMA17B_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: llama-stack-secret
+              key: llama17b-token
+        - name: MILVUS_DB_PATH
+          value: ~/.llama/milvus.db
+        - name: FMS_ORCHESTRATOR_URL
+          value: 'http://localhost'
+        - name: LLAMA_STACK_CONFIG_DIR
+          value: /opt/app-root/src/.llama/distributions/rh/
+        - name: PGVECTOR_HOST
+          valueFrom:
+            secretKeyRef:
+              name: pgvector
+              key: pgvector-host
+        - name: PGVECTOR_PORT
+          valueFrom:
+            secretKeyRef:
+              name: pgvector
+              key: pgvector-port
+        - name: PGVECTOR_DB
+          valueFrom:
+            secretKeyRef:
+              name: pgvector
+              key: pgvector-db
+        - name: PGVECTOR_USER
+          valueFrom:
+            secretKeyRef:
+              name: pgvector
+              key: pgvector-user
+        - name: PGVECTOR_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pgvector
+              key: pgvector-password
+        - name: OTEL_SERVICE_NAME
+          value: llamastack
+        - name: TELEMETRY_SINKS
+          value: 'console,otel_trace,otel_metric'
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://otel-collector-collector.observability-hub.svc.cluster.local:4318
+        - name: SENTENCE_TRANSFORMERS_HOME
+          value: /opt/app-root/src/.cache/huggingface/hub
+        - name: HF_HUB_OFFLINE
+          value: "1"
+        - name: TRANSFORMERS_OFFLINE
+          value: "1"
+        - name: HF_DATASETS_OFFLINE
+          value: "1"
+      name: llama-stack
+      port: 8321
+      resources:
+        limits:
+          cpu: '2'
+          memory: 12Gi
+        requests:
+          cpu: 250m
+          memory: 500Mi
+    distribution:
+      image: registry.redhat.io/rhoai/odh-llama-stack-core-rhel9@sha256:13ec5c9b96a9ca8c0a1fcc0568cf6f893478742d28d3b1381f073b9bdafb3320
+    userConfig:
+      configMapName: llama-stack-config
