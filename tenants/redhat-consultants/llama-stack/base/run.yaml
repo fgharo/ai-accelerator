@@ -183,9 +183,9 @@ tool_groups:
     mcp_endpoint:
       uri: "http://mcp-self-service-agent-snow.it-self-service-agent.svc.cluster.local:8000/mcp"
 
-logging_config:
-  category_levels:
-    agents: DEBUG
-    tools: DEBUG
-    openai_responses: DEBUG
-    all: DEBUG
+# logging_config:
+#   category_levels:
+#     agents: DEBUG
+#     tools: DEBUG
+#     openai_responses: DEBUG
+#     all: DEBUG
