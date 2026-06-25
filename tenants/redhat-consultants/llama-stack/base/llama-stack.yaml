@@ -30,12 +30,10 @@ spec:
               name: llama-stack-secret
               key: llama17b-token
         - name: LLAMA_GUARD_3_1B_URL
-          # value: 'https://litellm-prod.apps.maas.redhatworkshops.io/v1'
-          # Changing this to Llama Scout 17b
           value: 'https://maas-rhdp.apps.maas.redhatworkshops.io/v1'
         - name: LLAMA_GUARD_3_1B_MODEL_NAME
           # This is already set to the right model.
-          value: llama-scout-17b
+          value: Llama-Guard-3-1B
         - name: LLAMA_GUARD_3_1B_API_TOKEN
           valueFrom:
             secretKeyRef:
