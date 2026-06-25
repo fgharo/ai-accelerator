@@ -12,15 +12,35 @@ spec:
         - '-c'
         - llama stack run /etc/llama-stack/run.yaml
       env:
+        - name: TAVILY_SEARCH_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: llama-stack-secret
+              key: tavily-search-token
         - name: LLAMA17B_URL
-          value: 'https://litellm-prod.apps.maas.redhatworkshops.io/v1'
+          # value: 'https://litellm-prod.apps.maas.redhatworkshops.io/v1'
+          # Changing this to Llama Scout 17b
+          value: 'https://maas-rhdp.apps.maas.redhatworkshops.io/v1'
         - name: LLAMA17B_MODEL
+          # This is already set to the right model.
           value: llama-scout-17b
         - name: LLAMA17B_TOKEN
           valueFrom:
             secretKeyRef:
               name: llama-stack-secret
               key: llama17b-token
+        - name: LLAMA_GUARD_3_1B_URL
+          # value: 'https://litellm-prod.apps.maas.redhatworkshops.io/v1'
+          # Changing this to Llama Scout 17b
+          value: 'https://maas-rhdp.apps.maas.redhatworkshops.io/v1'
+        - name: LLAMA_GUARD_3_1B_MODEL_NAME
+          # This is already set to the right model.
+          value: llama-scout-17b
+        - name: LLAMA_GUARD_3_1B_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: llama-stack-secret
+              key: llama-guard-3-1b-token
         - name: MILVUS_DB_PATH
           value: ~/.llama/milvus.db
         - name: FMS_ORCHESTRATOR_URL
@@ -77,5 +97,8 @@ spec:
           memory: 500Mi
     distribution:
       image: registry.redhat.io/rhoai/odh-llama-stack-core-rhel9@sha256:13ec5c9b96a9ca8c0a1fcc0568cf6f893478742d28d3b1381f073b9bdafb3320
+    storage:
+      mountPath: /opt/app-root/src/
+      size: 10Gi
     userConfig:
       configMapName: llama-stack-config

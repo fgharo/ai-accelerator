@@ -26,6 +26,13 @@ providers:
     - provider_id: sentence-transformers
       provider_type: inline::sentence-transformers
       config: {}
+    - provider_id: vllm-llama-guard-3
+      provider_type: "remote::vllm"
+      config:
+        url: "${env.LLAMA_GUARD_3_1B_URL}"
+        max_tokens: 110000
+        api_token: ${env.LLAMA_GUARD_3_1B_API_TOKEN}
+        tls_verify: true
   vector_io:
     - provider_id: pgvector
       provider_type: remote::pgvector
@@ -108,16 +115,17 @@ providers:
         otel_exporter_otlp_endpoint: ${env.OTEL_EXPORTER_OTLP_ENDPOINT:}
         sqlite_db_path: ${env.SQLITE_DB_PATH:~/.llama/distributions/rh/trace_store.db}
   tool_runtime:
-    - provider_id: brave-search
-      provider_type: remote::brave-search
-      config:
-        api_key: ${env.BRAVE_SEARCH_API_KEY:}
-        max_results: 3
+    # Not seeing a reason for this:
+    # - provider_id: brave-search
+    #   provider_type: remote::brave-search
+    #   config:
+    #     api_key: ${env.BRAVE_SEARCH_API_KEY:}
+    #     max_results: 3
     - provider_id: tavily-search
       provider_type: remote::tavily-search
       config:
         api_key: ${env.TAVILY_SEARCH_API_KEY:}
-        max_results: 3
+        max_results: 10
     - provider_id: rag-runtime
       provider_type: inline::rag-runtime
       config: {}
@@ -133,6 +141,11 @@ models:
     model_id: ${env.LLAMA17B_MODEL}
     provider_id: llama-17b
     model_type: llm
+  - metadata: {}
+    model_id: ${env.LLAMA_GUARD_3_1B_MODEL_NAME}
+    provider_id: vllm-llama-guard-3
+    provider_model_id: ${env.LLAMA_GUARD_3_1B_MODEL_NAME}
+    model_type: llm
   - metadata:
       embedding_dimension: 768
     model_id: granite-embedding-125m
@@ -144,6 +157,10 @@ vector_dbs: []
 datasets: []
 scoring_fns: []
 benchmarks: []
+# Adding for bootcamp
+tools:
+- name: builtin::websearch
+  enabled: true
 tool_groups:
   - toolgroup_id: builtin::websearch
     provider_id: tavily-search
@@ -165,3 +182,10 @@ tool_groups:
     provider_id: model-context-protocol
     mcp_endpoint:
       uri: "http://mcp-self-service-agent-snow.it-self-service-agent.svc.cluster.local:8000/mcp"
+
+logging_config:
+  category_levels:
+    agents: DEBUG
+    tools: DEBUG
+    openai_responses: DEBUG
+    all: DEBUG
