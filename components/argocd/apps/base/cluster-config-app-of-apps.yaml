@@ -13,7 +13,7 @@ spec:
   source:
     path: patch-me-see-overlays
     repoURL: https://github.com/fgharo/ai-accelerator.git
-    targetRevision: cb-demo-environment-mcp-servers
+    targetRevision: cb-demo-environment-mcp-servers-exploring-bootcamp-mcp-servers
   syncPolicy:
     automated:
       prune: false
