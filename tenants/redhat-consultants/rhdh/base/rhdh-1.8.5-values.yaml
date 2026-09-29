@@ -4,7 +4,7 @@ global:
       enabled: true
       existingSecret: ''
       value: ''
-  clusterRouterBase: apps.cluster-kvlv2.kvlv2.sandbox3453.opentlc.com
+  clusterRouterBase: apps.cluster-tjq4d.tjq4d.sandbox5519.opentlc.com
   dynamic:
     includes:
       - dynamic-plugins.default.yaml
