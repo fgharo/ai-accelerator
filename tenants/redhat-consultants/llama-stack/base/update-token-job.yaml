@@ -1,0 +1,175 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: token-updater
+  namespace: llama-stack
+  labels:
+    app: token-updater
+# Note: imagePullSecrets not needed when using ImageStream in the same namespace
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: token-updater
+  namespace: llama-stack
+  labels:
+    app: token-updater
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list", "create", "update", "patch"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: token-updater
+  namespace: llama-stack
+  labels:
+    app: token-updater
+subjects:
+- kind: ServiceAccount
+  name: token-updater
+  namespace: llama-stack
+roleRef:
+  kind: Role
+  name: token-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: update-stellar-api-token
+  namespace: llama-stack
+  labels:
+    app: token-updater
+spec:
+  schedule: "*/25 * * * *"  # Run every minute
+  successfulJobsHistoryLimit: 3  # Keep 3 successful job history
+  failedJobsHistoryLimit: 1  # Keep 1 failed job history
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 300  # Clean up job after 5 minutes
+      backoffLimit: 3
+      template:
+        spec:
+          serviceAccountName: token-updater
+          containers:
+          - name: token-updater
+            image: ose-cli:latest  # Using ImageStream (no pull secret needed)
+            imagePullPolicy: Always
+            env:
+            - name: CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: vault-api-secret
+                  key: client-id
+                  optional: true
+            - name: CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: vault-api-secret
+                  key: client-secret
+                  optional: true
+            - name: SCOPE
+              valueFrom:
+                secretKeyRef:
+                  name: vault-api-secret
+                  key: scope
+                  optional: true
+            - name: COIN_URL
+              valueFrom:
+                secretKeyRef:
+                  name: vault-api-secret
+                  key: vault-url
+                  optional: true
+            command:
+              - /bin/bash
+              - -c
+              - |
+                set -e
+                
+                echo "Starting token generation..."
+                
+                # Validate required environment variables
+                if [ -z "$CLIENT_ID" ] || [ -z "$CLIENT_SECRET" ] || [ -z "$SCOPE" ] || [ -z "$COIN_URL" ]; then
+                  echo "Error: Missing required environment variables"
+                  echo "Required: CLIENT_ID, CLIENT_SECRET, SCOPE, COIN_URL"
+                  exit 1
+                fi
+                
+                # Make the curl request to get access token
+                echo "Requesting access token from $COIN_URL..."
+                RESPONSE=$(curl -k -s -d "client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&grant_type=client_credentials&scope=${SCOPE}" "${COIN_URL}")
+                
+                # Check if curl was successful
+                if [ $? -ne 0 ]; then
+                  echo "Error: Failed to make request to token endpoint"
+                  exit 1
+                fi
+                
+                # Extract access_token from JSON response using jq or grep/sed
+                if command -v jq &> /dev/null; then
+                  ACCESS_TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
+                else
+                  # Fallback to grep/sed if jq is not available
+                  ACCESS_TOKEN=$(echo "$RESPONSE" | grep -o '"access_token":"[^"]*' | sed 's/"access_token":"//')
+                fi
+                
+                # Validate that we got a token
+                if [ -z "$ACCESS_TOKEN" ] || [ "$ACCESS_TOKEN" = "null" ]; then
+                  echo "Error: Failed to extract access_token from response"
+                  echo "Response: $RESPONSE"
+                  exit 1
+                fi
+                
+                echo "Successfully retrieved access token (length: ${#ACCESS_TOKEN})"
+                
+                # Update or create the secret using oc create with --dry-run and oc apply
+                # This approach handles both create and update seamlessly
+                echo "Updating secret llama-stack-api..."
+                oc create secret generic llama-stack-api \
+                  --from-literal=stellarapikey="$ACCESS_TOKEN" \
+                  -n llama-stack \
+                  --dry-run=client -o yaml | oc apply -f -
+                echo "Secret llama-stack-api updated successfully"
+                
+                echo "Token update completed successfully!"
+                
+                # Trigger rolling restart of llama-stack deployment
+                # This ensures zero downtime with multiple replicas
+                echo ""
+                echo "Triggering rolling restart of llama-stack deployment..."
+                
+                # Find the deployment (created by LlamaStackDistribution operator)
+                DEPLOYMENT_NAME=$(oc get deployment -n llama-stack -o name 2>/dev/null | grep -i llama | head -1 | sed 's|deployment.apps/||' || echo "")
+                
+                if [ -z "$DEPLOYMENT_NAME" ]; then
+                  # Try alternative naming patterns
+                  DEPLOYMENT_NAME=$(oc get deployment -n llama-stack -o jsonpath='{.items[?(@.metadata.name=~"llama.*")].metadata.name}' 2>/dev/null | awk '{print $1}' || echo "")
+                fi
+                
+                if [ -z "$DEPLOYMENT_NAME" ]; then
+                  DEPLOYMENT_NAME=$(oc get deployment -n llama-stack -o jsonpath='{.items[?(@.metadata.name=~"llamastack.*")].metadata.name}' 2>/dev/null | awk '{print $1}' || echo "")
+                fi
+                
+                if [ -n "$DEPLOYMENT_NAME" ]; then
+                  echo "Found deployment: $DEPLOYMENT_NAME"
+                  echo "Triggering rolling restart..."
+                  oc rollout restart deployment "$DEPLOYMENT_NAME" -n llama-stack
+                  echo "Rolling restart initiated. New pods will be created gradually with updated token."
+                  
+                  # Wait and check rollout status
+                  sleep 3
+                  echo "Checking rollout status..."
+                  oc rollout status deployment "$DEPLOYMENT_NAME" -n llama-stack --timeout=120s || echo "Rollout in progress (this is normal for rolling updates)"
+                else
+                  echo "Error: Could not find llama-stack deployment"
+                  echo "Available deployments in namespace:"
+                  oc get deployment -n llama-stack -o name 2>/dev/null || echo "No deployments found"
+                  exit 1
+                fi
+          restartPolicy: Never
