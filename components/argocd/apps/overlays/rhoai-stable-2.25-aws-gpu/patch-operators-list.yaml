@@ -92,4 +92,4 @@ spec:
         url: https://kubernetes.default.svc
         values:
           name: redhat-developer-hub-operator
-          path: components/operators/redhat-developer-hub/overlays/fast-1.5
+          path: components/operators/redhat-developer-hub/overlays/fast-1.8
