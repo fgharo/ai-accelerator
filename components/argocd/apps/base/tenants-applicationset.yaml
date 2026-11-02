@@ -9,8 +9,8 @@ metadata:
 spec:
   generators:
   - git:
-      repoURL: 'https://github.com/redhat-ai-services/ai-accelerator.git'  # Update me on fork
-      revision: main
+      repoURL: 'https://github.com/fgharo/ai-accelerator.git'  # Update me on fork
+      revision: cb-demo-environment-recovered
       directories:
       - path: tenants/*/*/overlays/patch-me-see-overlay
       - path: tenants/*/*/overlays/common
