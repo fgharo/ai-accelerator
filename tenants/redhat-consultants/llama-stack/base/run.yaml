@@ -190,3 +190,5 @@ tool_groups:
 #     tools: DEBUG
 #     openai_responses: DEBUG
 #     all: DEBUG
+telemetry:
+  enabled: false
