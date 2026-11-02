@@ -94,7 +94,8 @@ spec:
           cpu: 250m
           memory: 500Mi
     distribution:
-      image: registry.redhat.io/rhoai/odh-llama-stack-core-rhel9@sha256:13ec5c9b96a9ca8c0a1fcc0568cf6f893478742d28d3b1381f073b9bdafb3320
+      image: quay.io/opendatahub/llama-stack:rhoai-v3.0-latest
+      # image: registry.redhat.io/rhoai/odh-llama-stack-core-rhel9@sha256:13ec5c9b96a9ca8c0a1fcc0568cf6f893478742d28d3b1381f073b9bdafb3320
     storage:
       mountPath: /opt/app-root/src/
       size: 10Gi
