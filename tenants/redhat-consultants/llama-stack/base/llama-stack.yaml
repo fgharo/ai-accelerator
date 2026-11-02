@@ -84,6 +84,8 @@ spec:
           value: "1"
         - name: HF_DATASETS_OFFLINE
           value: "1"
+        - name: LLAMA_STACK_LOGGING
+          value: "all=debug"
       name: llama-stack
       port: 8321
       resources:
