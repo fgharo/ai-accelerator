@@ -11,9 +11,9 @@ apis:
   - inference
   - safety
   - scoring
-  - telemetry
   - tool_runtime
   - vector_io
+  # - telemetry
 providers:
   inference:
     - provider_id: llama-17b
