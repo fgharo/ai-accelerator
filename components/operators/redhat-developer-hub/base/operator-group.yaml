@@ -1,9 +1,7 @@
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
-  annotations:
-    olm.providedAPIs: Backstage.v1alpha1.rhdh.redhat.com,Backstage.v1alpha2.rhdh.redhat.com,Backstage.v1alpha3.rhdh.redhat.com
-  name: rhdh-operator-xtscl
+  name: rhdh-operator
   namespace: rhdh-operator
 spec:
   upgradeStrategy: Default
