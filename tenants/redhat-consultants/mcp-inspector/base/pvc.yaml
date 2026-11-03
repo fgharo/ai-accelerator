@@ -1,0 +1,12 @@
+kind: PersistentVolumeClaim
+metadata:
+  name: mcp-inspector
+  namespace: mcp-inspector
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: ocs-storagecluster-cephfs
+  volumeMode: Filesystem

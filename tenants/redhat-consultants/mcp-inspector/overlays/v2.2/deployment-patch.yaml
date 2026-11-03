@@ -1,0 +1,19 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-inspector
+  namespace: mcp-inspector
+spec:
+  template:
+    spec:
+      containers:
+      - name: mcp-inspector
+        image: ghcr.io/modelcontextprotocol/inspector:2.2.0  # Running version v2.2.0 on cb side.
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
