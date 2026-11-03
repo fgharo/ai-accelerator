@@ -67,6 +67,8 @@ spec:
           value: "0"
         - name: DEBUG
           value: mcp*  
+        - name: DANGEROUSLY_OMIT_AUTH
+          value: "true"
         securityContext:
           capabilities:
             drop:
