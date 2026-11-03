@@ -62,7 +62,7 @@ spec:
         - name: DANGEROUSLY_BIND_ALL_INTERFACES
           value: "true"
         - name: ALLOWED_ORIGINS
-          value: "*"
+          value: "https://mcp-inspector-mcp-inspector.apps.ocp.rcqxc.sandbox1982.opentlc.com,https://mcp-inspector-ws=mcp-inspector.apps.ocp.rcqxc.sandbox1982.opentlc.com/"
         - name: NODE_TLS_REJECT_UNAUTHORIZED
           value: "0"
         - name: DEBUG
