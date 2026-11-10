@@ -165,7 +165,7 @@ upstream:
           - id: kubernetes
             name: 'Kubernetes Tools'
             type: streamable-http
-            url: 'http://localhost:8080/mcp'
+            url: 'http://ocp-mcp-server.llama-stack.svc.cluster.local:8000/mcp'
 
         # Optional: Custom system prompt
         systemPrompt: 'You are a helpful documentation assistant...'
