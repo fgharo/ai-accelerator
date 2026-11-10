@@ -13,9 +13,30 @@ global:
         package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-github-dynamic
       - disabled: false
         package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-github-org-dynamic
-      # Add this line below:
       - disabled: false
         package: ./dynamic-plugins/dist/backstage-plugin-scaffolder-backend-module-github-dynamic
+      # Augment Frontend Plugin
+      - package: oci://quay.io/user15/augment:v0.2.0!red-hat-developer-hub-backstage-plugin-augment
+        disabled: false
+        pullPolicy: Always
+        pluginConfig:
+          dynamicPlugins:
+            frontend:
+              red-hat-developer-hub.backstage-plugin-augment:
+                appIcons:
+                  - importName: AugmentIcon
+                    name: augmentIcon
+                dynamicRoutes:
+                  - path: /augment
+                    importName: AugmentPage
+                    menuItem:
+                      icon: chat
+                      text: Cloud@Citi
+
+      # Augment Backend Plugin
+      - package: oci://quay.io/user15/augment:v0.2.0!red-hat-developer-hub-backstage-plugin-augment-backend
+        disabled: false
+        pullPolicy: Always
   host: ''
 route:
   enabled: true
@@ -102,6 +123,51 @@ upstream:
           connection:
             password: '${POSTGRESQL_ADMIN_PASSWORD}'
             user: postgres
+
+      # Augment plugin configuration:
+      # -----
+      augment:
+        # Security mode (see docs/SECURITY_MODES.md for details)
+        security:
+          mode: 'none' # 'none' | 'plugin-only' | 'full'
+
+        llamaStack:
+          # Base URL for the Llama Stack server
+          baseUrl: 'https://llamastack-with-config-llama-stack.apps.ocp.rcqxc.sandbox1982.opentlc.com'
+          # ID of the vector store to use for RAG
+          vectorStoreId: 'my-vector-store-for-docs-a962b509-6f8c-4ba8-938c-930dce7a1d9f'
+          # Model to use for chat completions
+          model: 'llama-17b/llama-scout-17b' 
+          # Optional: Chunking strategy for file uploads
+          chunkingStrategy: 'static' # or 'auto'
+          maxChunkSizeTokens: 200
+          chunkOverlapTokens: 50
+          # Optional: API token for authentication
+          token: 'sk-F00wFNAEsBGZfKyZjuPfwg' # ${LLAMA_STACK_TOKEN}
+
+        # Document sources for automatic ingestion
+        documents:
+          # Sync mode: 'full' (add new + remove deleted) or 'append' (only add new)
+          syncMode: full
+          # Optional: How often to sync (e.g., '1h', '30m', '1d')
+          syncSchedule: '10m'
+
+        # Optional: MCP servers for extended capabilities
+        mcpServers:
+          - id: kubernetes
+            name: 'Kubernetes Tools'
+            type: streamable-http
+            url: 'http://localhost:8080/mcp'
+
+        # Optional: Custom system prompt
+        systemPrompt: 'You are a helpful documentation assistant...'
+
+        # Optional: Quick prompts for common queries
+        quickPrompts:
+          - title: 'Search Documentation'
+            description: 'Find relevant information'
+            prompt: 'Search the documentation for...'
+            category: Search
     args:
       - '--config'
       - dynamic-plugins-root/app-config.dynamic-plugins.yaml
