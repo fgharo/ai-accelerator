@@ -1,0 +1,3 @@
+server_id: oc-mcp-server
+transport: streamable-http
+url: https://ocp-mcp-server-llama-stack.apps.ocp.rcqxc.sandbox1982.opentlc.com/mcp

@@ -1,0 +1,31 @@
+includes:
+- dynamic-plugins.default.yaml
+plugins:
+- disabled: false
+  package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-github-dynamic
+- disabled: false
+  package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-github-org-dynamic
+- disabled: false
+  package: ./dynamic-plugins/dist/backstage-plugin-scaffolder-backend-module-github-dynamic
+# Augment Frontend Plugin
+- package: oci://quay.io/user15/augment:v0.2.0!red-hat-developer-hub-backstage-plugin-augment
+  disabled: false
+  pullPolicy: Always
+  pluginConfig:
+    dynamicPlugins:
+      frontend:
+        red-hat-developer-hub.backstage-plugin-augment:
+          appIcons:
+            - importName: AugmentIcon
+              name: augmentIcon
+          dynamicRoutes:
+            - path: /augment
+              importName: AugmentPage
+              menuItem:
+                icon: chat
+                text: Augment
+
+# Augment Backend Plugin
+- package: oci://quay.io/user15/augment:v0.2.0!red-hat-developer-hub-backstage-plugin-augment-backend
+  disabled: false
+  pullPolicy: Always

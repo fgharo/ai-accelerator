@@ -31,7 +31,7 @@ global:
                     importName: AugmentPage
                     menuItem:
                       icon: chat
-                      text: Cloud@Citi
+                      text: Augment
 
       # Augment Backend Plugin
       - package: oci://quay.io/user15/augment:v0.2.0!red-hat-developer-hub-backstage-plugin-augment-backend
@@ -151,6 +151,14 @@ upstream:
           syncMode: full
           # Optional: How often to sync (e.g., '1h', '30m', '1d')
           syncSchedule: '10m'
+          sources:
+            - type: github
+              repo: fgharo/my-rag-docs
+              branch: main
+              path: docs/
+              patterns:
+              - '*.md'
+              - '*.pdf'
 
         # Optional: MCP servers for extended capabilities
         mcpServers:
