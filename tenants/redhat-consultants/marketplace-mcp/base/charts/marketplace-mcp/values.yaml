@@ -1,0 +1,76 @@
+# This file contains values which are not environment specific.
+
+# The helm chart publish task replace LS_IMAGE_BASE with the image that your branch published
+# in the container image build stage.
+lsImageBase: LS_IMAGE_BASE
+
+nameOverride: "marketplace-mcp"
+fullnameOverride: ""
+
+replicaCount: 1
+
+image: 
+  repository: quay.io/user15/marketplace-mcp-server
+  tag: mock # TODO Get this to work with latest tag.
+  pullPolicy: Always
+
+podLabels: {}
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+envFrom:
+  configMapRef:
+    enabled: true
+    name: marketplace-mcp-config
+  secretRef:
+    enabled: false
+    name: marketplace-mcp
+
+containerPort: 3000
+
+livenessProbe:
+  path: /healthz
+  initialDelaySeconds: 15
+  periodSeconds: 30
+  timeoutSeconds: 5
+  falureThreshold: 3
+
+service:
+  type: ClusterIP
+  port: 3000
+  targetPort: 3000
+  sessionAffinity: ClientIP
+  sessionAffinityTimeoutSeconds: 3600
+
+route:
+  enabled: true
+  annotations:
+    haproxy.router.openshift.io/balance: roundrobin
+    haproxy.router.openshift.io/disable_cookies: "false"
+  weight: 100
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+
+imagePullSecrets: []
+nodeSelector: {}
+tolerations: {}
+affinity: {}
+
+config:
+  mpEnv: DEV
+  mpSmUserDev: "0000000003"
+  mpUsername: FH41425
+  logLevel: DEBUG
+  sslVerify: True
+  mcpJwtIssuer: pyjwt-local-dev-token
+  mcpJwtAudience: marketplace-mcp.llama-stack.svc.cluster.local
+  mcpJwtAlgorithm: HS256
+  mcpAuthStrict: True

@@ -1,0 +1,23 @@
+{{- if .Values.route.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "marketplace-mcp.fullname" . }}
+  labels:
+    {{- include "marketplace-mcp.labels" . | nindent 4 }}
+  {{- with .Values.route.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  to: 
+    kind: Service
+    name: {{ include "marketplace-mcp.fullname" . }}
+    weight: {{ .Values.route.weight }}
+  port:
+    targetPort: http
+  tls:
+    termination: {{ .Values.route.tls.termination }}
+    insecureEdgeTerminationPolicy: {{ .Values.route.tls.insecureEdgeTerminationPolicy }}
+  wildcardPolicy: {{ .Values.route.wildcardPolicy }}
+{{- end }}

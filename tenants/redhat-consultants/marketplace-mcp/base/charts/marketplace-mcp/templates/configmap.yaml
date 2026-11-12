@@ -1,0 +1,18 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ include "marketplace-mcp.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "marketplace-mcp.labels" . | nindent 4 }}
+data:
+  MP_ENV: {{ .Values.config.mpEnv }}
+  MP_SM_USER_DEV: {{ .Values.config.mpSmUserDev | quote }}
+  MP_USERNAME: {{ .Values.config.mpUsername | quote }}
+  LOG_LEVEL: {{ .Values.config.logLevel | quote }}
+  SSL_VERIFY: {{ .Values.config.sslVerify | quote }}
+  MCP_JWT_ISSUER: {{ .Values.config.mcpJwtIssuer | quote }}
+  MCP_JWT_AUDIENCE: {{ .Values.config.mcpJwtAudience | quote }}
+  MCP_JWT_ALGORITHM: {{ .Values.config.mcpJwtAlgorithm | quote }}
+  MCP_AUTH_STRICT: {{ .Values.config.mcpAuthStrict | quote }}
+  
