@@ -3,6 +3,9 @@ kind: Kustomization
 
 namespace: llama-stack
 
+resources:
+- namespace-llama-stack.yaml
+
 generatorOptions:
   disableNameSuffixHash: true
 
