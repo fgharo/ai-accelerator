@@ -4,7 +4,7 @@ global:
       enabled: true
       existingSecret: ''
       value: ''
-  clusterRouterBase: apps.ocp.rcqxc.sandbox1982.opentlc.com
+  clusterRouterBase: apps.ocp.rv4lv.sandbox3412.opentlc.com
   dynamic:
     includes:
       - dynamic-plugins.default.yaml
