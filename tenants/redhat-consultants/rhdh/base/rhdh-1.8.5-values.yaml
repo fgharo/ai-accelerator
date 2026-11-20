@@ -133,7 +133,7 @@ upstream:
 
         llamaStack:
           # Base URL for the Llama Stack server
-          baseUrl: 'https://llamastack-with-config-llama-stack.apps.ocp.rcqxc.sandbox1982.opentlc.com'
+          baseUrl: 'https://llamastack-with-config-llama-stack.apps.ocp.rv4lv.sandbox3412.opentlc.com'
           # ID of the vector store to use for RAG
           vectorStoreId: 'my-vector-store-for-docs-a962b509-6f8c-4ba8-938c-930dce7a1d9f'
           # Model to use for chat completions
